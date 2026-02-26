@@ -77,7 +77,6 @@ th, td {
   font-size: 14px;
 }
 
-/* Desktop */
 @media (min-width: 768px) {
   form {
     grid-template-columns: repeat(4, 1fr);
