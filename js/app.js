@@ -1,69 +1,65 @@
-//Control de stock
-
-const productos = [];
-
-let contadorId = 1;
-
-let opcionMenu  ;
-
-function cargarProducto(){
-    let nombre = prompt("¿Nombre del producto?");
-    let precio = Number(prompt("¿Precio del producto?"));
-    let cantidad = Number(prompt("¿Stock actual del producto?"));
-    let stockMinimo = Number(prompt("Elige la cantidad minima de stock"));
+// Control de stock
 
 
-    let productoNuevo = {
+const productos = JSON.parse(localStorage.getItem("productos")) || [];
+
+
+let contadorId = productos.length > 0 
+    ? productos[productos.length - 1].id + 1 
+    : 1;
+
+
+const form = document.getElementById("productForm");
+const tabla = document.getElementById("productTable");
+
+
+form.addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const nombre = document.getElementById("name").value;
+    const cantidad = Number(document.getElementById("quantity").value);
+    const stockMinimo = Number(document.getElementById("minStock").value);
+    const precio = Number(document.getElementById("price").value);
+
+    const productoNuevo = {
         id: contadorId,
         nombre,
-        precio,
         cantidad,
-        stockMinimo
-    }
+        stockMinimo,
+        precio
+    };
 
-    productos.push(productoNuevo)
+  
+    productos.push(productoNuevo);
 
-    contadorId++
-
-    alert("Producto cargado correctamente")
-    console.log(productos);
     
+    localStorage.setItem("productos", JSON.stringify(productos));
+
+    
+    contadorId++;
+
+
+    mostrarEnTabla(productoNuevo);
+
+    form.reset();
+});
+
+
+function mostrarEnTabla(producto) {
+    const fila = document.createElement("tr");
+
+    fila.innerHTML = `
+        <td>${producto.nombre}</td>
+        <td>${producto.cantidad}</td>
+        <td>${producto.stockMinimo}</td>
+        <td>$${producto.precio}</td>
+        <td>--</td>
+    `;
+
+    tabla.appendChild(fila);
 }
 
 
-function mostrarProductos(){
-    if(productos.length === 0){
-        console.log("No hay ningun producto cargado");
-        
-    }else{
-        for(let i = 0; i < productos.length; i++){
-            let producto = productos[i]
-            console.log(producto);
-
-            if(producto.cantidad <= producto.stockMinimo){
-                console.log("⚠️ Stock bajo");
-                
-            }
-            
-        }
-
-    }
-}
-
-while (true) {
-    opcionMenu = Number(prompt("\n 1)Cargar producto \n 2)Mostrar Productos \n 3)Salir"));
-
-    if(opcionMenu === 1){
-        cargarProducto();
-    }else if (opcionMenu === 2){
-        mostrarProductos();
-    }else if (opcionMenu === 3){
-        alert("Saliste con exito")
-
-        break;
-    }else{
-        alert("opcion invalida")
-    }
-    
-    
-}
+productos.forEach(producto => {
+    mostrarEnTabla(producto);
+});
